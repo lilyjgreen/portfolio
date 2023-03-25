@@ -1,0 +1,22 @@
+<html>
+<body>
+
+<?php
+	$number1 = $_POST["number1"];
+	$number2 = $_POST["number2"];
+	$number3 = $_POST["number3"];
+?> 
+<?php
+	if ("$number3" == "$number1" * "$number2") {
+		echo "Good Job!";
+	}	else {
+		echo "$number1" * "$number2" ."--> You need practice";
+	}
+?>
+
+<form method="POST" action="ljgreen.php">
+<input type="submit" value="Try again!" /> 
+</form>
+
+</body>
+</html>
