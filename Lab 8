@@ -1,0 +1,236 @@
+#include <stdio.h>
+#include <string.h>
+
+int count = 0;
+char lessons[5][20];
+char rnumbers[5][20];
+int rsize[5] = {0,0,0,0,0};
+const int SIZE = 5;
+void request(void);
+void cancel(void);
+void list(void);
+void letter(void);
+void group(void);
+
+int main(void)
+{
+	int i;
+	int options;
+	//intitialize array of strings
+	for(i=0; i<SIZE; i++);
+	{
+		lessons[i][0] = '\0';
+	}
+	while(1)
+	{
+		printf("Enter 1 to request a lesson\n");
+		printf("enter 2 to cancel a lesson\n");
+		printf("enter 3 to list the lessons\n");
+		printf("enter 4 to list the names starting with a letter\n");
+		printf("enter 5 to list the reservations\n");
+		printf("enter 9 to quit\n");
+		scanf("%d", &options);
+		switch(options)
+		{
+			case 1:
+				//request a lesson
+				request();
+				break;
+			case 2:
+				//cancel a lesson
+				cancel();
+				break;
+			case 3:
+				//list the lessons
+				list();
+				break;
+			case 4:
+				//list names starting with a character
+				letter();
+				break;
+			case 5:
+				//list reservations with group size
+				group();
+				break;
+			case 9:
+				//quit
+				return 0;
+			default:
+				printf("please enter 1, 2, 3, 4, 5, or 9");
+		}
+	}
+}
+
+//request a lesson
+void request(void)
+{
+	int i;
+	char user[20];
+	char usernumber[20];
+	int groupsize;
+	//check if lessons are full
+	if(count == SIZE)
+	{
+		printf("all lessons are full today, check back later\n");
+	}
+	else
+	{
+		//add new lessons with name input in next slot
+		i=count-1;
+		printf("what is the name?\n");
+		scanf("%s", &user);
+		//tell user if name is taken to change their name
+		if(count != 0)
+		{
+			i=0;
+			while(i<count)
+			{
+				if(strcmp(user,lessons[i]) == 0)
+				{
+					printf("the name is taken, choose a different name\n");
+					scanf("%s", &user);
+					i=0;
+				}
+				else
+				{
+					i++;
+				}
+			}
+		}
+		//proceed if name is available
+		strcpy(lessons[count], user);
+		//put phone numbers in array
+		printf("what is the phone number\n");
+		scanf("%s", &usernumber);
+		strcpy(rnumbers[count], usernumber);
+		//put group size into array
+		do
+		{
+			printf("what is the size of the group? please input a size between 1 and 4\n");
+			scanf("%d", &groupsize);
+			rsize[count]= groupsize;
+			//ensure size is between 1 and 4
+		} while(groupsize <1 || groupsize > 4);
+		printf("%s has successfully signed up for a lesson at %d pm\n",user, count+1);
+		count++;
+		return;
+	}
+}
+
+//cancel lesson
+void cancel(void)
+{
+	int i;
+	char user[20];
+	//check if there are lessons
+	if(count == 0)
+	{
+		printf("there are no lessons reserved\n");
+	}
+	else
+	{
+		//search for lessons with the name
+		printf("what is the name is the lesson under\n");
+		scanf("%s", &user);
+		for(i=0; i<count; i++)
+		{
+			if(strcmp(lessons[i], user) ==0)
+			{
+				printf("message to %s: %s has successfully been cancelled at %d pm\n", rnumbers[i], user, i+1);
+				lessons[i][0] = '\0';
+				rnumbers[i][0] = '\0';
+				rsize[i] = 0;
+				count--;
+				break;
+			}
+		}
+		if(i == count)
+		{
+			printf("there is no reservation under this name\n");
+		}
+		else
+		{
+			//shift lesson up to ensure no empty slots
+			for(;i<count; i++)
+			{
+				strcpy(lessons[i], lessons[i+1]);
+				strcpy(rnumbers[i], rnumbers[i+1]);
+				rsize[i] = rsize[i+1];
+				printf("message to %s: the lesson under %s has been moved from %d to %d pm\n", rnumbers[i], lessons[i], i+2, i+1);
+			}
+			lessons[i][0] ='0';
+		}
+	}
+	return;
+}
+
+//list all lessons
+void list(void)
+{
+	int i;
+	printf("there are currently %d lessons signed up\n", count);
+	//list of lessons that are signed up
+	for(i=0; i<count; i++)
+	{
+		printf(" -name: %s\n -number: %s\n -reservation time: %d pm\n -group size: %d\n", lessons[i], rnumbers[i], i+1, rsize[i]);
+	}
+	//list of lessons that are not signed up
+	for(i=count; i<SIZE; i++)
+	{
+		printf("free at %d pm\n", i+1);
+	}
+	return;
+}
+
+//list reservation names starting with a letter
+void letter(void)
+{
+	char namel;
+	int i;
+	//check if there are any lessons signed up
+	if (count == 0)
+	{
+		printf("there are no lessons signed up\n");
+		return;
+	}
+	//input starting letter
+	printf("what does the name start with?\n");
+	scanf("%c", &namel);
+	//serach through lessons for name with the starting letter
+	for(i=0; i<SIZE; i++)
+	{
+		if(lessons[i][0] == namel)
+		{
+			printf("%s has reserved a lesson with a group %d at %d pm\n", lessons[i], rsize[i], i+1);
+		}
+	}
+	return;
+}
+
+//list reservations with a group size
+void group(void)
+{
+	int groupsize;
+	int i;
+	//check if there are any lessons signed up
+	if(count == 0)
+	{
+		printf("there are no lessons signed up\n");
+		return;
+	}
+	do
+	{
+		printf("what is the group size? all sized are between 1 and 4\n");
+		scanf("%d", &groupsize);
+		//make sure checking group size is between 1 and 4
+	} while (groupsize < 1 || groupsize >4);
+	for (i=0; i<count; i++)
+	{
+		//show all reservaions with matching group size
+		if (groupsize == rsize[i])
+		{
+			printf("%s has a reservation of size %d at %d pm\n", lessons[i], groupsize, i+1);
+		}
+	}		
+	return;
+}
