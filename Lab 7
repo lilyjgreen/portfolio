@@ -1,0 +1,150 @@
+#include <stdio.h>
+#include <string.h>
+
+int count =0;
+char lessons[5][20];
+const int SIZE = 5;
+
+//request lessons
+void request(void)
+{
+	char user[20];
+	//check if lessons are full
+	if(count == SIZE)
+	{
+		printf("All lessons are full today, heck back later.\n");
+	}
+	else
+	{
+		//add new lessons with name input in next slot
+		printf("what is the name?\n");
+		scanf("%s", &user);
+		strcpy(lessons[count], user);
+		printf("%s has successfully signed up for a lesosn at %d pm.\n", user, count+1);
+		count++;
+	}
+}
+
+//cancel lesson
+void cancel (void)
+{
+	int i;
+	char user[20];
+	//check if there are lessons
+	if(count == 0)
+	{
+		printf("there are no lessons signed up.\n");
+	}
+	else
+	{
+		//search for lessons with the name
+		printf("what name is the lesson under?\n");
+		scanf("%s", &user);
+		for(i=0; i<count; i++)
+		{
+			if(strcmp(lessons[i], user) == 0)
+			{
+				lessons[i][0] = '\0';
+				printf("%s has successfully cancelled the lesson at %d pm.\n", user, i+1);
+				count --;
+				break;
+			}
+		}
+		if(i == count)
+		{
+			printf("there is no reservation under that name.\n");
+		}
+		else
+		{
+			//shift lessons up so there are no empty slots between lessons
+			for(;i<count; i++)
+			{
+				strcpy(lessons[i], lessons[i+1]);
+				printf("the lesson under %s has been moved form %d pm to %d pm.\n", lessons[i], i+2, i+1);
+			}
+			strcpy(lessons[i], "");
+		}
+	}
+}
+
+//list all lessons
+void llist(void)
+{
+	int i;
+	printf("there are currently %d lessons signed up. \n", count);
+	//list of lesons that are signed up
+	for(i=0; i<count; i++)
+	{
+		printf("%s has signed up for a lesson at %d pm. \n", lessons[i], i+1);
+	}
+	//list of lessons that are not signed up
+	for(i=count; i<SIZE; i++)
+	{
+		printf("Nobody singed up for the lessons at %d pm.\n", i+1);
+	}
+}
+
+//list users starting with a letter
+void nlist(void)
+{
+	int i;
+	char namel;
+	//check if there are any lessons signed up
+	if (count == 0)
+	{
+		printf("there are no lessons signed up.\n");
+	}
+	else
+	{
+		printf("what does the name start with?\n");
+		scanf("%c", &namel);
+		//search through lessons for name that start with character
+		for(i=0; i<SIZE; i++)
+		{
+			if (lessons[i][0] == namel)
+			{
+				printf("%s has reserved a lesson.\n", lessons[i]);
+			}
+		}
+	}
+}
+
+int main (void)
+{
+	int i;
+	int options;
+	//initialize array of strings
+	for(i=0; i<SIZE; i++)
+	{
+		lessons[i][0] = '\0';
+	}
+	while(1)
+	{
+		printf("enter 1 to request a lesson, 2 to cancel a lesson, 3 to list a lesson, 4 to list names starting with a letter, 9 to quit\n");
+		scanf("%d", &options);
+		switch(options)
+		{
+			case 1:
+				//request a lesson
+				request();
+				break;
+			case 2:
+				//cancel a lesson
+				cancel();
+				break;
+			case 3:
+				//list a lesson
+				llist();
+				break;
+			case 4:
+				//list names starting with a character
+				nlist();
+				break;
+			case 9:
+				//end
+				return 0;
+			default:
+				printf("please enter number 1, 2, 3, 4, or 9\n");
+		}
+	}
+}
