@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int main(void) {
+        srand((int)time(NULL));
+
+int score = 0;
+int answer = 0;
+int input = 0;
+int i = 0;
+int k = 0;
+int j = 0;
+
+for (i = 0; i <= 9; i++) {
+        k = rand() % 13;
+        j = rand() % 13;
+
+answer = k * j;
+
+printf("What is %d x %d?\n", k, j);
+scanf("%d",&input);
+
+if (answer == input) {
+        score++;
+	printf("Correct! Your current score is %d.\n", score);
+} else {
+        printf("Incorrect, you answered %d, but the correct answer is %d.\n",  input, answer);
+        }
+
+printf("Your final score is %d.\n", score);
+}
+return 0;
+}
